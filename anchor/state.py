@@ -1,6 +1,5 @@
 ﻿import sqlite3
 import time
-import json
 
 class StateStore:
     def __init__(self, db_path="anchor.db"):

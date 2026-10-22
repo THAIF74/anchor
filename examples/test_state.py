@@ -1,4 +1,4 @@
-from anchor.state import StateStore
+﻿from anchor.state import StateStore
 
 store = StateStore()
 store.set_goal("Research 3 AI companies and write a summary.")
