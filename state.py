@@ -1,7 +1,5 @@
-# anchor/state.py
 import sqlite3
 import time
-import json
 
 class StateStore:
     def __init__(self, db_path="anchor.db"):
@@ -31,7 +29,7 @@ class StateStore:
         with self.conn:
             self.conn.execute("DELETE FROM agent_state")
             self.conn.execute("INSERT INTO agent_state (goal, created_at) VALUES (?, ?)", (goal, time.time()))
-            self.conn.execute("DELETE FROM memories") # Clear old memories for new goal
+            self.conn.execute("DELETE FROM memories")
 
     def get_goal(self) -> str:
         row = self.conn.execute("SELECT goal FROM agent_state LIMIT 1").fetchone()

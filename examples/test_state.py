@@ -1,20 +1,14 @@
-# examples/test_state.py
 from anchor.state import StateStore
 
-# Initialize the store (creates anchor.db)
 store = StateStore()
-
-# 1. Set the goal
 store.set_goal("Research 3 AI companies and write a summary.")
-print(f"🎯 Current Goal: {store.get_goal()}")
+print(f"🎯 Current Goal: {store.get_goal()}\n")
 
-# 2. Add some memories (simulating an agent taking steps)
 store.add_memory(step=1, content="Searching for AI companies...")
 store.add_memory(step=2, content="Found OpenAI.")
 store.add_memory(step=3, content="Found Anthropic.")
 store.add_memory(step=4, content="Got distracted and looked up cat videos.")
 
-# 3. Print the memories
-print("\n🧠 Agent Memories:")
+print("🧠 Agent Memories:")
 for mem in store.get_memories():
     print(f"  [Step {mem['step']}] {mem['content']}")
