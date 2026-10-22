@@ -49,3 +49,29 @@ class StateStore:
     def clear_memories(self):
         with self.conn:
             self.conn.execute("DELETE FROM memories")
+
+    def prune_memories(self, goal_keywords: list, max_memories: int = 3):
+        memories = self.get_memories()
+        if len(memories) <= max_memories:
+            print("✅ Memory limit not reached. No pruning needed.")
+            return
+
+        scored_memories = []
+        for i, mem in enumerate(memories):
+            score = 0
+            content_lower = mem["content"].lower()
+            for kw in goal_keywords:
+                if kw.lower() in content_lower:
+                    score += 10
+            score += i
+            scored_memories.append((score, mem))
+
+        scored_memories.sort(key=lambda x: x[0])
+        num_to_delete = len(memories) - max_memories
+        print(f"🧹 Pruning {num_to_delete} irrelevant memories...")
+
+        for i in range(num_to_delete):
+            worst_memory = scored_memories[i][1]
+            print(f"   🗑️ Deleting: '{worst_memory['content']}' (Score: {scored_memories[i][0]})")
+            with self.conn:
+                self.conn.execute("DELETE FROM memories WHERE id = ?", (worst_memory["id"],))
