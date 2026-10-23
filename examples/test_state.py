@@ -4,18 +4,27 @@ store = StateStore()
 store.set_goal("Research 3 AI companies and write a summary.")
 print(f"🎯 Current Goal: {store.get_goal()}\n")
 
-store.add_memory(step=1, content="Searching for AI companies...")
-store.add_memory(step=2, content="Found OpenAI.")
-store.add_memory(step=3, content="Found Anthropic.")
-store.add_memory(step=4, content="Got distracted and looked up cat videos.")
+keywords = ["research", "ai", "companies", "summary", "openai", "anthropic"]
 
-print("--- Before Pruning ---")
-for mem in store.get_memories():
-    print(f"  [Step {mem['step']}] {mem['content']}")
+# Step 1: On track
+action_1 = "Searching for AI companies..."
+store.add_memory(step=1, content=action_1)
+drift, msg = store.detect_drift(action_1, keywords, step=1)
+print(f"Action 1: {action_1} -> Drift? {drift}")
 
-print("\n--- Running Garbage Collector ---")
-store.prune_memories(goal_keywords=["research", "ai", "companies", "openai", "anthropic"], max_memories=3)
+# Step 2: On track
+action_2 = "Found OpenAI and Anthropic."
+store.add_memory(step=2, content=action_2)
+drift, msg = store.detect_drift(action_2, keywords, step=2)
+print(f"Action 2: {action_2} -> Drift? {drift}")
 
-print("\n--- After Pruning ---")
+# Step 3: THE AGENT GETS DISTRACTED (Drift!)
+action_3 = "Let me write a poem about a cat."
+store.add_memory(step=3, content=action_3)
+drift, msg = store.detect_drift(action_3, keywords, step=3)
+print(f"Action 3: {action_3} -> Drift? {drift}")
+print(f"   {msg}")
+
+print("\n--- Current Memory State ---")
 for mem in store.get_memories():
     print(f"  [Step {mem['step']}] {mem['content']}")

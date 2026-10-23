@@ -53,7 +53,6 @@ class StateStore:
     def prune_memories(self, goal_keywords: list, max_memories: int = 3):
         memories = self.get_memories()
         if len(memories) <= max_memories:
-            print("✅ Memory limit not reached. No pruning needed.")
             return
 
         scored_memories = []
@@ -68,10 +67,21 @@ class StateStore:
 
         scored_memories.sort(key=lambda x: x[0])
         num_to_delete = len(memories) - max_memories
-        print(f"🧹 Pruning {num_to_delete} irrelevant memories...")
-
         for i in range(num_to_delete):
             worst_memory = scored_memories[i][1]
-            print(f"   🗑️ Deleting: '{worst_memory['content']}' (Score: {scored_memories[i][0]})")
             with self.conn:
                 self.conn.execute("DELETE FROM memories WHERE id = ?", (worst_memory["id"],))
+
+    # --- NEW CODE: DRIFT DETECTOR ---
+    def detect_drift(self, current_action: str, goal_keywords: list, step: int):
+        """Checks if the current action matches the goal. If not, injects a system alert."""
+        action_lower = current_action.lower()
+        matches = sum(1 for kw in goal_keywords if kw.lower() in action_lower)
+
+        # If the action has 0 keyword matches, it's drifting
+        if matches == 0:
+            alert = f"⚠️ SYSTEM ALERT: You are drifting from the goal! Refocus on: {self.get_goal()}"
+            self.add_memory(step=step, content=alert)
+            return True, alert
+        
+        return False, "On track."
