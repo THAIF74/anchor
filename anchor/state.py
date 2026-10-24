@@ -3,7 +3,8 @@ import time
 
 class StateStore:
     def __init__(self, db_path="anchor.db"):
-        self.conn = sqlite3.connect(db_path)
+        # The fix is right here: check_same_thread=False
+        self.conn = sqlite3.connect(db_path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self._init_db()
 
@@ -72,13 +73,10 @@ class StateStore:
             with self.conn:
                 self.conn.execute("DELETE FROM memories WHERE id = ?", (worst_memory["id"],))
 
-    # --- NEW CODE: DRIFT DETECTOR ---
     def detect_drift(self, current_action: str, goal_keywords: list, step: int):
-        """Checks if the current action matches the goal. If not, injects a system alert."""
         action_lower = current_action.lower()
         matches = sum(1 for kw in goal_keywords if kw.lower() in action_lower)
 
-        # If the action has 0 keyword matches, it's drifting
         if matches == 0:
             alert = f"⚠️ SYSTEM ALERT: You are drifting from the goal! Refocus on: {self.get_goal()}"
             self.add_memory(step=step, content=alert)

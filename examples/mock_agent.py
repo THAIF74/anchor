@@ -47,3 +47,4 @@ for step, action in enumerate(agent_actions, start=1):
 print("\n--- FINAL AGENT MEMORY ---")
 for mem in store.get_memories():
     print(f"  [Step {mem['step']}] {mem['content']}")
+
