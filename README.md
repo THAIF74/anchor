@@ -1,5 +1,7 @@
 # ⚓ Anchor: Cognitive State Manager for AI Agents
-![Anchor Dashboard](c:\Users\dell\OneDrive\Pictures\Screenshots\anchor.png)
+
+![Anchor Dashboard](images/dashboard.png)
+
 Current AI agents suffer from "amnesia" and "goal drift." They get distracted, lose track of their objective, and fill their context window with irrelevant junk. 
 
 Anchor is a runtime state manager that sits between your agent's brain and its actions. It actively manages the agent's memory, prunes irrelevant thoughts, and forces the agent back on track if it starts drifting.
